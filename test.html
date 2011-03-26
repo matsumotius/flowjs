@@ -2,13 +2,28 @@
 <html>
     <head>
         <script type='text/javascript' src='jquery1.4.4.js'></script>
+        <script type='text/javascript' src='jscss.js'></script>
         <script type='text/javascript' src='flow.js'></script>
         <script type='text/javascript'>
             <!--
                 // test execute
                 $(document).ready(function(){
                     // button test
-                    var flow = $('#flowjs').flow();
+                    var jscss = {
+                        '#aaa' : {
+                            event : {
+                                click : {
+                                    '#aaa' : {
+                                        'color' : 'gray'
+                                    },
+                                    'body' : {
+                                        'background-color' : 'gray'
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    var flow = $('#flowjs').flow({ jscss : jscss });
                     $('#test-button').click(function(e){
                         flow.append('hogehoge', 'div', { 'id' : 'aaa', style : 'color : red' });
                     });

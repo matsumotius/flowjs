@@ -63,7 +63,7 @@
             }
             if(settings.jscss && $(this).jscss){
                 console.log('apply jscss option: ',settings.jscss);
-                $(this).jscss(settings.jscss);
+                $('*').jscss(settings.jscss);
             }
         };
         return this;
