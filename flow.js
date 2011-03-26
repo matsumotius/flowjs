@@ -1,104 +1,71 @@
-var flow = {
-    // new module
-    config : {
-        show_interval : 700 
-    },
-    event : {
-        /*
-        hover : {
-            in : {
-                'class-name' : {
-                    css : { 'css-key' : 'css-value' },
-                    js : function(){}
-                },
-                'class-name2' : {
-                    css : { 'css-key' : 'css-value' },
-                    js : function(e){}
+(function($){
+    $.fn.flow = function(options){
+        var defaults = {
+            animation : {
+                enabled : true,
+                show : {
+                    interval : 700
                 }
             },
-            out : {
-                'class-name' : {
-                    css : { 'css-key' : 'css-value' },
-                    js : function(e){}
+            entrance_id : 'id-for-flowjs-jQuery-plugin'
+        };
+        
+        var Util = {
+            tag : {
+                BLANK : ' ',
+                double_quotes : function(val){
+                    return '\"'+val+'\"';   
                 },
-                'class-name2' : {
-                    css : { 'css-key' : 'css-value' },
-                    js : function(e){}
+                generate : function(name, attr, val){
+                    if(!name) return '';
+                    // start
+                    var tag_string = '<' + name;
+                    for(var key in attr) {
+                        tag_string += Util.tag.BLANK + key + '=' + Util.tag.double_quotes(attr[key]);
+                    }
+                    tag_string += '>';
+                    // content
+                    tag_string += ((val) ? val : '');
+                    // end
+                    tag_string += '</' + name + '>';
+                    
+                    return tag_string;
+                }
+            },
+            attr : {
+                concat : function(a, b){
+                    for(key in b){
+                        if(key == 'style' && a.style){
+                            if(a.style[a.style.length] != ';'){
+                                a.style += ';';
+                            }
+                            a.style += b[key];
+                            continue;
+                        }
+                        a[key] = b[key];
+                    }
+                    return a;
                 }
             }
-        }
-        */
-    },
-    target : {
-        id : '',
-        latest_flow : 'empty-flow'
-    },
-    init : function(element_id, event){
-        flow.target.id = element_id;
-        if(event) flow.event = event;
-        // append empty-flow
-        $('#'+flow.target.id).append(flow.util.tag.div(flow.target.latest_flow, null, null));
-    },
-    set : {
-        show_interval : function(ms) {
-            flow.config.show_interval = ms;
-        },
-        hover : function(element_id){
-            // set once
-            // console.log('start setting hover:', element_id);
-            if(!flow.event.hover) return;
+        };
+        
+        var settings = $.extend(defaults, options);
+        
+        $(this).append(Util.tag.generate('div', { 'id' : settings.entrance_id }, null));
+        
+        this.append = function(msg, tag, attr){
+            if(!msg) return;
+            $(this).find('#'+settings.entrance_id).after((tag)?Util.tag.generate(tag, Util.attr.concat(attr, { 'style' : 'display:none;' }), msg):msg);
             
-            var hover_in, hover_out;
-            for(var cls in flow.event.hover.in){
-                if($('#'+element_id).attr('class') == cls){
-                    console.log(flow.event.hover.in[cls]);
-                    hover_in = flow.event.hover.in[cls];
-                    break;
-                }
+            if(attr.id && settings.animation.enabled){
+                $(this).find('#'+attr.id).hide();
+                $(this).find('#'+attr.id).show(settings.animation.show.interval);
             }
-            for(var cls in flow.event.hover.out){
-                if($('#'+element_id).attr('class') == cls){
-                    console.log(flow.event.hover.out[cls]);
-                    hover_out = flow.event.hover.out[cls];
-                    break;
-                }
+            if(settings.jscss && $(this).jscss){
+                console.log('apply jscss option: ',settings.jscss);
+                $(this).jscss(settings.jscss);
             }
-            // console.log(hover_in, hover_out);
-            $('#'+element_id).hover(function(e){
-                if(hover_in.css){
-                    for(var key in hover_in.css){
-                        // console.log('set hover in: ', key, hover_in[key]);
-                        $(this).css(key, hover_in.css[key]);
-                    }
-                }
-                if(hover_in.js) hover_in.js(e);
-            },function(e){
-                if(hover_out.css){
-                    for(var key in hover_out.css){
-                        // console.log('set hover out: ', key, hover_out[key]);
-                        $(this).css(key, hover_out.css[key]);
-                    }
-                }
-                if(hover_out.js) hover_out.js(e);
-            });
-        }
-    },
-    append : function(element_id, content){
-        $('#'+flow.target.latest_flow).before(content);
-        flow.set.hover(element_id);
-        flow.show(element_id);
-        flow.target.latest_flow = element_id;
-    },
-    show : function(element_id){
-        // console.log('show id:',element_id, flow.config.show_interval);
-        $("#"+element_id).show(flow.config.show_interval);
-    },
-    util : {
-        tag : {
-            div : function(id, cls, val) {
-                return '<div id=\"'+((id)?id:'')+'\" class=\"'+((cls)?cls:'')+'\">'+((val)?val:'')+'</div>';
-            }
-        }
+        };
+        return this;
     }
-};
-
+})(jQuery);

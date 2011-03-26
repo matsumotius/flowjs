@@ -1,0 +1,28 @@
+<!-- test code -->
+<html>
+    <head>
+        <script type='text/javascript' src='jquery1.4.4.js'></script>
+        <script type='text/javascript' src='flow.js'></script>
+        <script type='text/javascript'>
+            <!--
+                // test execute
+                $(document).ready(function(){
+                    // button test
+                    var flow = $('#flowjs').flow();
+                    $('#test-button').click(function(e){
+                        flow.append('hogehoge', 'div', { 'id' : 'aaa', style : 'color : red' });
+                    });
+                    
+                    
+                    // block test was true
+                    // console.log(Util);
+                });
+            -->
+        </script>
+    </head>
+    <body>
+        <h1>- flowjs test page</h1>
+        <div id='flowjs'></div>
+        <button id='test-button' type='button'>FlowJs</button>
+    </body>
+</html>
